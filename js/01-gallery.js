@@ -9,7 +9,7 @@ const galleryMarkup = createMarkupGallery(galleryItems);
 galleryList.insertAdjacentHTML("beforeend", galleryMarkup);
 galleryList.addEventListener("click", onGalleryItemClick);
 
-// создание динамической разметки
+// Create dynamic layout  "создание динамической разметки"
 function createMarkupGallery(array) {
   return array
     .map(({ preview, original, description }) => {
@@ -27,7 +27,7 @@ function createMarkupGallery(array) {
     .join("");
 }
 
-// Делегирование и получение URL большого изображения
+//Delegating and getting the URL of a large image  "Делегирование и получение URL большого изображения"
 function onGalleryItemClick(event) {
   event.preventDefault();
 
@@ -42,10 +42,10 @@ function onGalleryItemClick(event) {
   onBasicLightbox(galleryImageUrlBig);
 }
 
-// Создание глобальной переменной для basicLightbox
+//Creating a global variable for basicLightbox  "Создание глобальной переменной для basicLightbox"
 let instance = {};
 
-// Функция basicLightbox
+//function basicLightbox   "Функция basicLightbox"
 function onBasicLightbox(imgUrl) {
   instance = basicLightbox.create(
     `<img src="${imgUrl}" width="800" height="600">`,
@@ -62,7 +62,7 @@ function onBasicLightbox(imgUrl) {
   instance.show();
 }
 
-// Функция проверки нажатия клавиши Escape
+//Escape key press function "Функция проверки нажатия клавиши Escape"
 function onEscKeyPress(event) {
   const ESC_KEY_CODE = "Escape";
 
