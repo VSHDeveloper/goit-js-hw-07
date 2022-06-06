@@ -3,24 +3,29 @@ import { galleryItems } from './gallery-items.js';
 
 console.log(galleryItems);
 
-const galleryEl = document.querySelector('.gallery');
+const galleryList = document.querySelector(".gallery");
+const markupGallery = createMarkupGallery(galleryItems);
 
-const makeGalleryMarkup = (galleryItem => {
-    const { preview, original, description } = galleryItem;
-    return `
-    <div class="gallery__item">
-  <a class="gallery__link" href="${original}">
-    <img
-      class="gallery__image"
-      src="${preview}"
-      alt="${description}"
-    />
-  </a>
-</div>
-`
+galleryList.insertAdjacentHTML("beforeend", markupGallery);
+
+// Создание динамической разметки
+function createMarkupGallery(array) {
+  return array
+    .map(({ preview, original, description }) => {
+      return `<li><a class="gallery__item" href="${original}">
+        <img class="gallery__image" src="${preview}" alt="${description}" />
+        </a></li>`;
+    })
+    .join("");
+}
+
+// Создание и настройка библиотеки simplelightbox
+let gallery = new SimpleLightbox(".gallery a", {
+  enableKeyboard: true,
+  showCounter: false,
+  captions: true,
+  captionSelector: "img",
+  captionsData: "alt",
+  captionPosition: "bottom",
+  captionDelay: 250,
 });
-
-const makeGallery = galleryItems.map(makeGalleryMarkup).join('');
-galleryEl.insertAdjacentHTML('beforeend', makeGallery);
-
-const lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250 });

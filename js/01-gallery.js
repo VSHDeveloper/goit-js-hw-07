@@ -3,64 +3,70 @@ import { galleryItems } from './gallery-items.js';
 
 console.log(galleryItems);
 
-const galleryEl = document.querySelector('.gallery');
+const galleryList = document.querySelector(".gallery");
+const galleryMarkup = createMarkupGallery(galleryItems);
 
-const makeGalleryMarkup = (galleryItem => {
-    const { preview, original, description } = galleryItem;
-    return `
-    <div class="gallery__item">
-  <a class="gallery__link" href="${original}">
-    <img
-      class="gallery__image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</div>
-`
-});
+galleryList.insertAdjacentHTML("beforeend", galleryMarkup);
+galleryList.addEventListener("click", onGalleryItemClick);
 
-const makeGallery = galleryItems.map(makeGalleryMarkup).join('');
-galleryEl.insertAdjacentHTML('beforeend', makeGallery);
+// создание динамической разметки
+function createMarkupGallery(array) {
+  return array
+    .map(({ preview, original, description }) => {
+      return `<div class="gallery__item">
+        <a class="gallery__link" href="${original}">
+          <img
+            class="gallery__image"
+            src="${preview}"
+            data-source="${original}"
+            alt="${description}"
+          />
+        </a>
+      </div>`;
+    })
+    .join("");
+}
 
-galleryEl.addEventListener('click', openModalImage);
+// Делегирование и получение URL большого изображения
+function onGalleryItemClick(event) {
+  event.preventDefault();
 
-let instance;
-
-function openModalImage(e) {
-    if (e.target.nodeName !== "IMG") {
-        return;
-    }
-    e.preventDefault();
-
-    instance = basicLightbox.create(`
-    <img src="${e.target.dataset.source}">
-`,
-        {
-            onShow: (instance) => {
-                addListener();
-            },
-            onClose: (instance) => {
-                removeListener();
-            },
-        }
-    );
-    instance.show();
-};
-
-function addListener() {
-  window.addEventListener("keydown", onEscClick);
-};
-
-function removeListener() {
-  window.removeEventListener("keydown", onEscClick);
-};
-
-function onEscClick(e) {
-  if (e.code !== "Escape") {
+  const isGalleryItemEl = event.target.classList.contains("gallery__image");
+  if (!isGalleryItemEl) {
     return;
   }
 
-  instance.close();
+  const galleryImage = event.target;
+  const galleryImageUrlBig = galleryImage.dataset.source;
+
+  onBasicLightbox(galleryImageUrlBig);
+}
+
+// Создание глобальной переменной для basicLightbox
+let instance = {};
+
+// Функция basicLightbox
+function onBasicLightbox(imgUrl) {
+  instance = basicLightbox.create(
+    `<img src="${imgUrl}" width="800" height="600">`,
+    {
+      onShow: () => {
+        window.addEventListener("keydown", onEscKeyPress);
+      },
+      onClose: () => {
+        window.removeEventListener("keydown", onEscKeyPress);
+      },
+    }
+  );
+
+  instance.show();
+}
+
+// Функция проверки нажатия клавиши Escape
+function onEscKeyPress(event) {
+  const ESC_KEY_CODE = "Escape";
+
+  if (event.code === ESC_KEY_CODE) {
+    instance.close();
+  }
 }
